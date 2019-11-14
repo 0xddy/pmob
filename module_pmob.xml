@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_pmob" default="compile.module.pmob">
+  <dirname property="module.pmob.basedir" file="${ant.file.module_pmob}"/>
+  
+  <property name="module.jdk.home.pmob" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.pmob" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.pmob" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.pmob" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="pmob.output.dir" value="${module.pmob.basedir}/out/production/pmob"/>
+  <property name="pmob.testoutput.dir" value="${module.pmob.basedir}/out/test/pmob"/>
+  
+  <path id="pmob.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="pmob.module.production.classpath">
+    <path refid="${module.jdk.classpath.pmob}"/>
+    <pathelement location="${basedir}/libs/jsoup-1.12.1.jar"/>
+    <pathelement location="${basedir}/libs/gson-2.8.6.jar"/>
+    <pathelement location="${basedir}/libs/jansi-1.18.jar"/>
+    <pathelement location="${basedir}/libs/fastjson-1.2.62.jar"/>
+    <pathelement location="${basedir}/libs/commons-io-2.6.jar"/>
+    <pathelement location="${basedir}/libs/sqlite-jdbc-3.28.0.jar"/>
+  </path>
+  
+  <path id="pmob.runtime.production.module.classpath">
+    <pathelement location="${pmob.output.dir}"/>
+    <pathelement location="${basedir}/libs/jsoup-1.12.1.jar"/>
+    <pathelement location="${basedir}/libs/gson-2.8.6.jar"/>
+    <pathelement location="${basedir}/libs/jansi-1.18.jar"/>
+    <pathelement location="${basedir}/libs/fastjson-1.2.62.jar"/>
+    <pathelement location="${basedir}/libs/commons-io-2.6.jar"/>
+    <pathelement location="${basedir}/libs/sqlite-jdbc-3.28.0.jar"/>
+  </path>
+  
+  <path id="pmob.module.classpath">
+    <path refid="${module.jdk.classpath.pmob}"/>
+    <pathelement location="${pmob.output.dir}"/>
+    <pathelement location="${basedir}/libs/jsoup-1.12.1.jar"/>
+    <pathelement location="${basedir}/libs/gson-2.8.6.jar"/>
+    <pathelement location="${basedir}/libs/jansi-1.18.jar"/>
+    <pathelement location="${basedir}/libs/fastjson-1.2.62.jar"/>
+    <pathelement location="${basedir}/libs/commons-io-2.6.jar"/>
+    <pathelement location="${basedir}/libs/sqlite-jdbc-3.28.0.jar"/>
+  </path>
+  
+  <path id="pmob.runtime.module.classpath">
+    <pathelement location="${pmob.testoutput.dir}"/>
+    <pathelement location="${pmob.output.dir}"/>
+    <pathelement location="${basedir}/libs/jsoup-1.12.1.jar"/>
+    <pathelement location="${basedir}/libs/gson-2.8.6.jar"/>
+    <pathelement location="${basedir}/libs/jansi-1.18.jar"/>
+    <pathelement location="${basedir}/libs/fastjson-1.2.62.jar"/>
+    <pathelement location="${basedir}/libs/commons-io-2.6.jar"/>
+    <pathelement location="${basedir}/libs/sqlite-jdbc-3.28.0.jar"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.pmob">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.pmob">
+    <patternset refid="excluded.from.module.pmob"/>
+  </patternset>
+  
+  <path id="pmob.module.sourcepath">
+    <dirset dir="${module.pmob.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.pmob" depends="compile.module.pmob.production,compile.module.pmob.tests" description="Compile module pmob"/>
+  
+  <target name="compile.module.pmob.production" depends="register.custom.compilers" description="Compile module pmob; production classes">
+    <mkdir dir="${pmob.output.dir}"/>
+    <javac2 destdir="${pmob.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.pmob}/javac">
+      <compilerarg line="${compiler.args.pmob}"/>
+      <bootclasspath refid="pmob.module.bootclasspath"/>
+      <classpath refid="pmob.module.production.classpath"/>
+      <src refid="pmob.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.pmob"/>
+    </javac2>
+    
+    <copy todir="${pmob.output.dir}">
+      <fileset dir="${module.pmob.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.pmob.tests" depends="register.custom.compilers,compile.module.pmob.production" description="compile module pmob; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.pmob" description="cleanup module">
+    <delete dir="${pmob.output.dir}"/>
+    <delete dir="${pmob.testoutput.dir}"/>
+  </target>
+</project>
